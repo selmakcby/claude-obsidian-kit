@@ -3,7 +3,7 @@
 This is the entry point to your project's shared knowledge. Every agent reads here first.
 
 ## Architecture
-- [[architecture/overview]]
+- [[architecture/overview|overview]]
 
 ## Decisions
 See `decisions/` folder — every "why we chose X over Y" lives here.
@@ -28,4 +28,5 @@ Daily session summaries in `sessions/`.
 
 ## Conventions
 
-See [[_schema/conventions]] for the full rulebook.
+See [[_schema/conventions|conventions]] for the full rulebook, and
+[[_schema/template|template]] for the frontmatter every note must carry.

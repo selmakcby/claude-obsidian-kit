@@ -1,3 +1,12 @@
+---
+type: architecture
+date: 2026-04-23
+tags: [schema, conventions]
+links: []
+status: accepted
+source: vault-template
+---
+
 # Vault Conventions
 
 The rulebook. Every note follows these — agents AND humans.
