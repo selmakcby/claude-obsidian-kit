@@ -1,0 +1,54 @@
+/* claude-obsidian-kit — vault layer colours + the callouts the skill actually uses.
+   Enable in Settings → Appearance → CSS snippets. */
+
+.theme-dark, .theme-light {
+  --vk-architecture: #E07A5F;
+  --vk-decision:     #C99A2E;
+  --vk-design:       #D96BA0;
+  --vk-entity:       #2A9D8F;
+  --vk-concept:      #6C91BF;
+  --vk-session:      #8A8580;
+  --vk-schema:       #B07BC4;
+  --vk-conflict:     #A63D2F;
+}
+.theme-dark { --vk-decision: #E9C46A; }
+
+/* ---- The important part -------------------------------------------------
+   The llm-wiki skill tells the agent to flag contradictions with
+   > [!conflict]. Obsidian has no such callout type, so without this rule it
+   renders as an anonymous grey note — every contradiction you carefully
+   marked becomes invisible in reading view. */
+.callout[data-callout="conflict"] {
+  --callout-color: 166, 61, 47;
+  --callout-icon: lucide-git-fork;
+  border-left: 4px solid var(--vk-conflict);
+}
+.callout[data-callout="conflict"] .callout-title { text-transform: none; }
+
+/* Resolved contradiction — visual closure for the same thread. */
+.callout[data-callout="resolved"] {
+  --callout-color: 42, 157, 143;
+  --callout-icon: lucide-check-check;
+}
+
+/* Archived note — the kit archives instead of deleting; make that visible. */
+.callout[data-callout="archived"] {
+  --callout-color: 138, 133, 128;
+  --callout-icon: lucide-archive;
+}
+
+/* ---- File explorer: colour by layer ---- */
+.nav-folder-title[data-path^="architecture"] { --vk: var(--vk-architecture); }
+.nav-folder-title[data-path^="decisions"]    { --vk: var(--vk-decision); }
+.nav-folder-title[data-path^="design"]       { --vk: var(--vk-design); }
+.nav-folder-title[data-path^="entities"]     { --vk: var(--vk-entity); }
+.nav-folder-title[data-path^="concepts"]     { --vk: var(--vk-concept); }
+.nav-folder-title[data-path^="sessions"]     { --vk: var(--vk-session); }
+.nav-folder-title[data-path^="_schema"]      { --vk: var(--vk-schema); }
+
+.nav-folder-title[data-path]:not([data-path=""]) {
+  border-left: 3px solid var(--vk, transparent);
+  border-radius: 0 var(--radius-s) var(--radius-s) 0;
+}
+.nav-folder-title[data-path] .nav-folder-title-content { color: var(--vk); }
+.nav-folder-title[data-path^="sessions"] .nav-folder-title-content { font-style: italic; }

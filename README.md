@@ -21,7 +21,7 @@
                                (orchestrator)
 ```
 
-[Install](#install) · [Efficiency](#efficiency) · [FAQ](FAQ.md) · [How it works](#how-it-works)
+[Install](#install) · [Retrofit](#retrofit--you-already-have-a-folder) · [Lint](#lint-as-a-command) · [Efficiency](#efficiency) · [FAQ](FAQ.md)
 
 </div>
 
@@ -36,6 +36,9 @@ A drop-in kit that extends Claude Code with:
   - `scribe` — dedicated vault writer (INGEST, runs on haiku for efficiency)
 - **One skill** — `llm-wiki` — the INGEST · QUERY · LINT protocols
 - **One vault template** — pre-structured Obsidian vault with conventions
+- **One linter** — `vault-lint.py`, the LINT protocol as a runnable command (no dependencies)
+- **One retrofit guide** — [RETROFIT.md](RETROFIT.md), for when you already have months of material
+- **Obsidian config** — graph colours by layer, and the `[!conflict]` callout the skill needs
 
 After install, your agents read from and write to a shared markdown knowledge graph that **survives sessions**. Yesterday's decisions are tomorrow's context.
 
@@ -68,7 +71,7 @@ archivist → reads vault/decisions/2026-04-21-stripe-webhooks.md → answers in
 ### Quick
 
 ```bash
-git clone https://github.com/<your-username>/claude-obsidian-kit ~/claude-obsidian-kit
+git clone https://github.com/selmakcby/claude-obsidian-kit ~/claude-obsidian-kit
 
 cd ~/claude-obsidian-kit
 ./scripts/install.sh ~/my-project
@@ -148,6 +151,76 @@ archivist: returns severity-sorted report with fix suggestions
 
 ---
 
+## Retrofit — you already have a folder
+
+`vault-template/` assumes you are starting clean. Almost nobody is. The realistic situation is
+months of accumulated material — transcripts, drafts, half-finished projects, and often an older
+vault somewhere inside that already works.
+
+**[RETROFIT.md](RETROFIT.md)** is the guide for that case. It covers the two decisions you make
+before writing anything (the vault root is the folder you already have; an existing vault inside
+it is canonical and read-only), and the parallel-ingest design that keeps agents from writing the
+same entity page twice:
+
+```
+Phase 1  domain agents ──▶ project + decision pages only
+                           (reference [[entities]], write none)
+              │
+              ▼  union + dedupe + deterministic split, in code
+Phase 2  node agents  ──▶ disjoint slices of the entity/concept list
+              │
+              ▼
+Phase 3  index + lint ──▶ one owner for index.md, one audit
+```
+
+Splitting by *page type* rather than only by domain makes collisions impossible by construction
+rather than by instruction. Reference run: 1.9 GB, ~1,000 text files, 226 pages, 3,484 links,
+zero broken links, zero fabricated source citations.
+
+---
+
+## Lint, as a command
+
+`skills/llm-wiki/lint.md` specifies the checks and a health-score formula. `vault-lint.py`
+implements that spec so the result is measured rather than asserted. Single file, standard
+library only, read-only:
+
+```bash
+python3 scripts/vault-lint.py path/to/vault
+
+# retrofit case: audit the wiki layer, resolve links against the whole folder
+python3 scripts/vault-lint.py . --notes 'wiki/*' --notes 'index.md'
+
+# non-English frontmatter
+python3 scripts/vault-lint.py . --fields tur,durum,guncelleme --date-field guncelleme
+
+# CI
+python3 scripts/vault-lint.py . --fail-under 85
+```
+
+| Check | Why it earns its place |
+|---|---|
+| Broken links | Code spans are stripped first — an `[[example]]` inside backticks is not a broken link |
+| Orphans | Entry points (`index`, `log`, `README`) are exempt |
+| **Unverifiable sources** | Every path a note cites in `source:` is checked against disk. This is how you catch a citation the agent invented |
+| **Ambiguous targets** | Two files sharing a basename means `[[name]]` resolves by proximity — possibly not the file you meant |
+| Missing concept pages | A link referenced 3+ times with no page behind it |
+| Frontmatter, stale notes | Per the schema; stale = old date still in `draft` |
+
+Flagged `> [!conflict]` callouts are **reported but not scored**. A marked contradiction is the
+protocol working; the dangerous one is unmarked, and no linter can see that. Pass
+`--score-conflicts` for the strict formula.
+
+---
+
+## Obsidian config
+
+The skill tells the agent to flag contradictions with `> [!conflict]` — and Obsidian has no such
+callout type, so they render as anonymous grey notes. [`obsidian/`](obsidian/README.md) fixes
+that and colours the graph by layer. Copy it into your vault's `.obsidian/`.
+
+---
+
 ## Efficiency
 
 This kit is **intentionally designed for low token cost**. See [EFFICIENCY.md](EFFICIENCY.md) for all 10 patterns.
@@ -198,6 +271,7 @@ Every note has frontmatter. Every note links to others. Orphans are tech debt.
 ```
 claude-obsidian-kit/
 ├── README.md                 ← you are here
+├── RETROFIT.md               ← pointing the kit at a folder you already have
 ├── EFFICIENCY.md             ← token patterns (10 of them)
 ├── FAQ.md                    ← common questions
 ├── LICENSE                   ← MIT
@@ -221,8 +295,14 @@ claude-obsidian-kit/
 │   ├── entities/example-service.md
 │   ├── concepts/example-concept.md
 │   └── sessions/
+├── obsidian/
+│   ├── graph.json            ← graph coloured by vault layer
+│   ├── snippets/
+│   │   └── vault-layers.css  ← [!conflict] callout + folder colours
+│   └── README.md
 └── scripts/
-    └── install.sh            ← one-command setup
+    ├── install.sh            ← one-command setup
+    └── vault-lint.py         ← runs the LINT protocol for real (no deps)
 ```
 
 ---
