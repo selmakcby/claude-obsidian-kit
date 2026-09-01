@@ -21,7 +21,7 @@
                                (orchestrator)
 ```
 
-[Install](#install) · [Retrofit](#retrofit--you-already-have-a-folder) · [Lint](#lint-as-a-command) · [Efficiency](#efficiency) · [FAQ](FAQ.md)
+[Install](#install) · [Retrofit](#retrofit--you-already-have-a-folder) · [Lint](#lint-as-a-command) · [Efficiency](#efficiency) · [FAQ](FAQ.md) · [Prompts 🇹🇷](PROMPTS.md)
 
 </div>
 
