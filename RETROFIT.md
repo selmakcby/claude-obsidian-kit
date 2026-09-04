@@ -27,7 +27,7 @@ Open Obsidian on the folder itself and add the wiki layer inside it:
 
 ```
 your-folder/            ← vault root. Obsidian opens HERE.
-├── CLAUDE.md           ← the schema (see below)
+├── CLAUDE.md           ← the schema ([template](vault-template/CLAUDE.md))
 ├── index.md            ← catalogue
 ├── log.md              ← append-only record
 ├── wiki/               ← the only thing the agent owns
@@ -41,6 +41,10 @@ a navigation layer over your real material instead of a parallel copy of it.
 
 Physical reorganisation stays on the table. Do it later, deliberately, with the wiki already
 telling you what everything is.
+
+For the schema itself, start from [vault-template/CLAUDE.md](vault-template/CLAUDE.md)
+([🇹🇷 Türkçe](CLAUDE.tr.md)) — keep the workflows and prohibitions, and adapt the purpose,
+folder table and naming to your domain.
 
 ### 2. An existing vault inside is canonical and read-only.
 

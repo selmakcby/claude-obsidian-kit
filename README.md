@@ -35,6 +35,7 @@ A drop-in kit that extends Claude Code with:
   - `archivist` — vault reader + health guardian (QUERY, LINT)
   - `scribe` — dedicated vault writer (INGEST, runs on haiku for efficiency)
 - **One skill** — `llm-wiki` — the INGEST · QUERY · LINT protocols
+- **One constitution** — [`vault-template/CLAUDE.md`](vault-template/CLAUDE.md) — the schema every agent reads before touching the vault ([🇹🇷 Türkçe](CLAUDE.tr.md))
 - **One vault template** — pre-structured Obsidian vault with conventions
 - **One linter** — `vault-lint.py`, the LINT protocol as a runnable command (no dependencies)
 - **One retrofit guide** — [RETROFIT.md](RETROFIT.md), for when you already have months of material
